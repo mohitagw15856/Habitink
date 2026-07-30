@@ -32,7 +32,7 @@ class FrameCanvas {
   bool inkAt(int x, int y) const;  // true when the pixel is black
 
   void fillRect(int x, int y, int w, int h, bool ink);
-  void drawRect(int x, int y, int w, int h, bool ink);                // 1px border
+  void drawRect(int x, int y, int w, int h, bool ink);                 // 1px border
   void drawRect(int x, int y, int w, int h, int thickness, bool ink);  // inset border
   void drawRoundedRect(int x, int y, int w, int h, int radius, bool ink);
   void hLine(int x, int y, int len, bool ink);

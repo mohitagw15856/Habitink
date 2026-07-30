@@ -110,8 +110,7 @@ int main() {
     power.now += 25000;  // force the idle timeout so the loop terminates
   }
 
-  std::printf("habitink host build OK: flushes=%d, done2=%d\n", display.flushes,
-              controller.app().doneToday(1) ? 1 : 0);
+  std::printf("habitink host build OK: flushes=%d, done2=%d\n", display.flushes, controller.app().doneToday(1) ? 1 : 0);
   return 0;
 }
 

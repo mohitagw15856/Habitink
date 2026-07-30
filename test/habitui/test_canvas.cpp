@@ -24,7 +24,7 @@ TEST(canvas_pixel_bit_position) {
   // Verify MSB-is-leftmost packing on a known byte.
   auto buf = makeBuffer(8, 1);
   FrameCanvas c(buf.data(), 8, 1);
-  c.clear(true);       // 0xFF
+  c.clear(true);           // 0xFF
   c.setPixel(0, 0, true);  // clear MSB -> 0x7F
   CHECK_EQ(buf[0], 0x7F);
   c.clear(true);
@@ -53,9 +53,9 @@ TEST(canvas_fill_and_draw_rect) {
 
   c.clear(true);
   c.drawRect(4, 4, 8, 8, true);
-  CHECK(c.inkAt(4, 4));       // corner on border
-  CHECK(c.inkAt(11, 4));      // top edge
-  CHECK(!c.inkAt(7, 7));      // interior empty
+  CHECK(c.inkAt(4, 4));   // corner on border
+  CHECK(c.inkAt(11, 4));  // top edge
+  CHECK(!c.inkAt(7, 7));  // interior empty
 }
 
 TEST(canvas_text_width_and_draw) {

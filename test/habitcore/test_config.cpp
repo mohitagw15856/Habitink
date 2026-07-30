@@ -23,7 +23,7 @@ TEST(schedule_parse_and_serialise) {
 
 TEST(schedule_parse_rejects_bad) {
   Schedule s;
-  CHECK(!Schedule::parseField("111110", s));   // too short
+  CHECK(!Schedule::parseField("111110", s));    // too short
   CHECK(!Schedule::parseField("11111000", s));  // too long
   CHECK(!Schedule::parseField("111110x", s));   // bad char
   CHECK(!Schedule::parseField("weekly", s));
@@ -60,9 +60,9 @@ TEST(config_parse_basic) {
 TEST(config_reports_issues_but_keeps_good_lines) {
   const std::string text =
       "1\twater\tdaily\tGood\n"
-      "99\trun\tdaily\tBadId\n"        // id out of range
-      "2\trun\tnope\tBadSchedule\n"    // bad schedule
-      "3\tbook\tdaily\t\n"             // empty name
+      "99\trun\tdaily\tBadId\n"      // id out of range
+      "2\trun\tnope\tBadSchedule\n"  // bad schedule
+      "3\tbook\tdaily\t\n"           // empty name
       "4\tpen\tdaily\tAlsoGood\n";
   HabitConfig cfg;
   std::vector<ParseIssue> issues;

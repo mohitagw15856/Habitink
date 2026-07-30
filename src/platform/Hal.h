@@ -16,9 +16,9 @@ namespace habitink {
 // How the device came out of sleep, so the controller can decide whether to
 // repaint fully or trust the retained e-ink frame.
 enum class WakeReason : uint8_t {
-  ColdBoot,     // power on / flash: full repaint
-  Button,       // woken by a button: interactive session
-  Timer,        // periodic wake (unused today, reserved)
+  ColdBoot,  // power on / flash: full repaint
+  Button,    // woken by a button: interactive session
+  Timer,     // periodic wake (unused today, reserved)
 };
 
 // The panel: a 1-bit framebuffer the controller draws into via FrameCanvas.

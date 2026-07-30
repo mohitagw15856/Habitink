@@ -12,9 +12,7 @@ static const char* kConfig =
     "2\trun\t1111100\tMorning run\n"
     "3\tbook\tdaily\tRead\n";
 
-static std::vector<uint8_t> panel() {
-  return std::vector<uint8_t>(static_cast<size_t>(100) * 480, 0xFF);
-}
+static std::vector<uint8_t> panel() { return std::vector<uint8_t>(static_cast<size_t>(100) * 480, 0xFF); }
 
 TEST(app_loads_config) {
   FakeStore store;
@@ -140,8 +138,8 @@ TEST(app_empty_config_is_safe) {
   CHECK(!app.handleButton(AppButton::Toggle));  // nothing to toggle
   auto buf = panel();
   FrameCanvas c(buf.data(), 800, 480, 100);
-  app.render(c);            // must not crash
-  app.renderSleepFace(c);   // must not crash
+  app.render(c);           // must not crash
+  app.renderSleepFace(c);  // must not crash
 }
 
 TEST(app_weekly_reads_current_week) {

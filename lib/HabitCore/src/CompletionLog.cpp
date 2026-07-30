@@ -17,7 +17,9 @@ std::string trimmed(const std::string& in) {
 
 const char* CompletionLog::headerLine() { return "# habitink log v1"; }
 
-std::string CompletionLog::formatRecord(const Date& date, bool done) { return date.toIso() + "\t" + (done ? "1" : "0"); }
+std::string CompletionLog::formatRecord(const Date& date, bool done) {
+  return date.toIso() + "\t" + (done ? "1" : "0");
+}
 
 bool CompletionLog::applyLine(const std::string& rawLine) {
   const std::string line = trimmed(rawLine);

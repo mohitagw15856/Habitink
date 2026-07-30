@@ -36,9 +36,9 @@ TEST(log_accepts_crlf_and_spaces) {
 TEST(log_window_bounds_memory) {
   CompletionLog log;
   log.setWindow(Date(2026, 7, 1), Date(2026, 7, 31));
-  CHECK(log.applyLine("2026-06-15\t1"));   // before window: dropped
-  CHECK(log.applyLine("2026-07-10\t1"));   // inside
-  CHECK(log.applyLine("2026-08-01\t1"));   // after window: dropped
+  CHECK(log.applyLine("2026-06-15\t1"));  // before window: dropped
+  CHECK(log.applyLine("2026-07-10\t1"));  // inside
+  CHECK(log.applyLine("2026-08-01\t1"));  // after window: dropped
   CHECK_EQ(log.doneCount(), 1u);
   CHECK(log.isDone(Date(2026, 7, 10)));
   CHECK(!log.isDone(Date(2026, 6, 15)));
@@ -81,7 +81,7 @@ TEST(streak_broken_by_missed_earlier_day) {
   log.applyRecord(Date(2026, 7, 29), true);
   log.applyRecord(Date(2026, 7, 30), true);
   StreakInfo s = computeStreak(daily, log, Date(2026, 7, 30));
-  CHECK_EQ(s.current, 3);   // 28, 29, 30
+  CHECK_EQ(s.current, 3);  // 28, 29, 30
   CHECK_EQ(s.longest, 3);
 }
 
@@ -176,10 +176,10 @@ TEST(week_row_counts) {
   log.applyRecord(Date(2026, 7, 28), true);
   WeekRow row = buildWeekRow(daily, log, Date(2026, 7, 30));
   CHECK_EQ(row.doneCount, 2);
-  CHECK(row.days[0] == CellState::Done);  // Mon
-  CHECK(row.days[1] == CellState::Done);  // Tue
-  CHECK(row.days[2] == CellState::Due);   // Wed, missed
-  CHECK(row.days[3] == CellState::Due);   // Thu today, not done
+  CHECK(row.days[0] == CellState::Done);    // Mon
+  CHECK(row.days[1] == CellState::Done);    // Tue
+  CHECK(row.days[2] == CellState::Due);     // Wed, missed
+  CHECK(row.days[3] == CellState::Due);     // Thu today, not done
   CHECK(row.days[4] == CellState::Future);  // Fri
 }
 

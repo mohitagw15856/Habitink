@@ -10,11 +10,11 @@
 namespace habitui {
 
 struct Font {
-  uint8_t width;         // cell width in pixels (<= 8)
-  uint8_t height;        // cell height in pixels
-  uint8_t first;         // first ASCII codepoint in the table
-  uint8_t last;          // last ASCII codepoint in the table
-  const uint8_t* rows;   // (last-first+1) * height bytes, row-major
+  uint8_t width;        // cell width in pixels (<= 8)
+  uint8_t height;       // cell height in pixels
+  uint8_t first;        // first ASCII codepoint in the table
+  uint8_t last;         // last ASCII codepoint in the table
+  const uint8_t* rows;  // (last-first+1) * height bytes, row-major
 
   // Pointer to the first row byte of a glyph, or the '?' glyph for anything out
   // of range so callers never index past the table.

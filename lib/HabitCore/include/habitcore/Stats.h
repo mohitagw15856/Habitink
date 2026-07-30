@@ -17,10 +17,10 @@
 namespace habitcore {
 
 struct StreakInfo {
-  int current = 0;       // consecutive completed due days ending at/near today
-  int longest = 0;       // longest run of completed due days ever
-  int completed = 0;     // total completed due days in the log window
-  int dueSoFar = 0;      // due days from first activity up to and including today
+  int current = 0;    // consecutive completed due days ending at/near today
+  int longest = 0;    // longest run of completed due days ever
+  int completed = 0;  // total completed due days in the log window
+  int dueSoFar = 0;   // due days from first activity up to and including today
   bool doneToday = false;
   bool dueToday = false;
 };
@@ -31,11 +31,11 @@ StreakInfo computeStreak(const Schedule& schedule, const CompletionLog& log, con
 
 // State of one cell in a rendered grid.
 enum class CellState : uint8_t {
-  NotDue = 0,   // outside the schedule: draw faint or empty
-  Due,          // scheduled but not completed
-  Done,         // scheduled and completed
-  Future,       // after today: not yet actionable
-  Blank         // padding before the log/window starts
+  NotDue = 0,  // outside the schedule: draw faint or empty
+  Due,         // scheduled but not completed
+  Done,        // scheduled and completed
+  Future,      // after today: not yet actionable
+  Blank        // padding before the log/window starts
 };
 
 struct GridCell {

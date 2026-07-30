@@ -14,8 +14,7 @@ std::string rstrip(const std::string& s) {
 
 // Splits into at most four tab-separated fields. The name (field four) keeps
 // any internal spaces but never a tab, so we stop splitting after three tabs.
-bool splitFields(const std::string& line, std::string& id, std::string& icon, std::string& sched,
-                 std::string& name) {
+bool splitFields(const std::string& line, std::string& id, std::string& icon, std::string& sched, std::string& name) {
   size_t p1 = line.find('\t');
   if (p1 == std::string::npos) return false;
   size_t p2 = line.find('\t', p1 + 1);

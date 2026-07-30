@@ -41,9 +41,9 @@ class Schedule {
 };
 
 struct Habit {
-  int id = 0;                // 1..kMaxHabits, stable identity used for the log filename
-  std::string icon;          // token from the built-in icon set (see IconSet.h)
-  std::string name;          // display name, UTF-8, no tab characters
+  int id = 0;        // 1..kMaxHabits, stable identity used for the log filename
+  std::string icon;  // token from the built-in icon set (see IconSet.h)
+  std::string name;  // display name, UTF-8, no tab characters
   Schedule schedule = Schedule::daily();
 
   bool isValid() const { return id >= 1 && id <= kMaxHabits && !name.empty(); }

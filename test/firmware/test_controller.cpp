@@ -29,7 +29,7 @@ TEST(controller_begin_paints_full_on_cold_boot) {
   HabitInkController ctrl(makeHal(d, b, p, s, c));
   ctrl.begin();
   CHECK(d.anyInk());
-  CHECK(d.lastFull);           // cold boot = full refresh
+  CHECK(d.lastFull);  // cold boot = full refresh
   CHECK_EQ(d.flushes, 1);
 }
 
@@ -43,7 +43,7 @@ TEST(controller_button_wake_uses_fast_refresh) {
   p.reason = WakeReason::Button;
   HabitInkController ctrl(makeHal(d, b, p, s, c));
   ctrl.begin();
-  CHECK(!d.lastFull);          // button wake = fast refresh
+  CHECK(!d.lastFull);  // button wake = fast refresh
 }
 
 TEST(controller_toggle_logs_and_repaints) {
@@ -59,9 +59,9 @@ TEST(controller_toggle_logs_and_repaints) {
 
   b.queued.push_back(AppButton::Toggle);
   CHECK(ctrl.tick());
-  CHECK(ctrl.app().doneToday(0));            // logged
-  CHECK_EQ(s.recordCount(1), 1);             // appended to SD
-  CHECK(d.flushes > flushesAfterBegin);      // repainted
+  CHECK(ctrl.app().doneToday(0));        // logged
+  CHECK_EQ(s.recordCount(1), 1);         // appended to SD
+  CHECK(d.flushes > flushesAfterBegin);  // repainted
 }
 
 TEST(controller_cycle_then_toggle_second_habit) {
@@ -91,10 +91,10 @@ TEST(controller_sleeps_on_power_hold) {
   HabitInkController ctrl(makeHal(d, b, p, s, c));
   ctrl.begin();
   b.holdPower = true;
-  CHECK(!ctrl.tick());          // decided to sleep
+  CHECK(!ctrl.tick());  // decided to sleep
   CHECK(ctrl.sleeping());
   CHECK_EQ(p.deepSleeps, 1);
-  CHECK(d.lastFull);            // sleep face uses a full refresh
+  CHECK(d.lastFull);  // sleep face uses a full refresh
 }
 
 TEST(controller_sleeps_on_idle_timeout) {
@@ -123,8 +123,8 @@ TEST(controller_activity_resets_idle_timer) {
   ctrl.begin();
   p.now = 8000;
   b.queued.push_back(AppButton::Next);
-  CHECK(ctrl.tick());           // activity at t=8000 resets timer
-  p.now = 15000;                // 7000ms since activity: below threshold
+  CHECK(ctrl.tick());  // activity at t=8000 resets timer
+  p.now = 15000;       // 7000ms since activity: below threshold
   CHECK(ctrl.tick());
   CHECK_EQ(p.deepSleeps, 0);
 }

@@ -43,23 +43,23 @@ inline void fail(const std::string& file, int line, const std::string& expr) {
 
 }  // namespace tinytest
 
-#define TEST(name)                                                            \
-  static void name();                                                         \
-  static ::tinytest::Registrar registrar_##name(#name, name);                 \
+#define TEST(name)                                            \
+  static void name();                                         \
+  static ::tinytest::Registrar registrar_##name(#name, name); \
   static void name()
 
-#define CHECK(cond)                                                           \
-  do {                                                                        \
-    if (!(cond)) ::tinytest::fail(__FILE__, __LINE__, #cond);                 \
+#define CHECK(cond)                                           \
+  do {                                                        \
+    if (!(cond)) ::tinytest::fail(__FILE__, __LINE__, #cond); \
   } while (0)
 
-#define CHECK_EQ(a, b)                                                        \
-  do {                                                                        \
-    if (!((a) == (b))) ::tinytest::fail(__FILE__, __LINE__, #a " == " #b);    \
+#define CHECK_EQ(a, b)                                                     \
+  do {                                                                     \
+    if (!((a) == (b))) ::tinytest::fail(__FILE__, __LINE__, #a " == " #b); \
   } while (0)
 
-#define CHECK_MSG(cond, msg)                                                  \
-  do {                                                                        \
+#define CHECK_MSG(cond, msg)                                                                    \
+  do {                                                                                          \
     if (!(cond)) ::tinytest::fail(__FILE__, __LINE__, std::string(#cond) + " (" + (msg) + ")"); \
   } while (0)
 

@@ -13,7 +13,9 @@ FrameCanvas::FrameCanvas(uint8_t* buffer, int width, int height, int strideBytes
       stride_(strideBytes > 0 ? strideBytes : (width + 7) / 8),
       font_(defaultFont()) {}
 
-void FrameCanvas::clear(bool white) { std::memset(buffer_, white ? 0xFF : 0x00, static_cast<size_t>(stride_) * height_); }
+void FrameCanvas::clear(bool white) {
+  std::memset(buffer_, white ? 0xFF : 0x00, static_cast<size_t>(stride_) * height_);
+}
 
 void FrameCanvas::setPixel(int x, int y, bool ink) {
   if (x < 0 || y < 0 || x >= width_ || y >= height_) return;

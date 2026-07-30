@@ -7,8 +7,8 @@ namespace habitcore {
 namespace {
 // Order must match the IconId enum exactly.
 const char* const kTokens[] = {
-    "check", "water", "run",  "book",  "pill", "meditate", "dumbbell", "sun",
-    "moon",  "heart", "food", "pen",   "code", "music",    "leaf",     "star",
+    "check", "water", "run",  "book", "pill", "meditate", "dumbbell", "sun",
+    "moon",  "heart", "food", "pen",  "code", "music",    "leaf",     "star",
 };
 static_assert(sizeof(kTokens) / sizeof(kTokens[0]) == kIconCount, "token table out of sync with IconId");
 }  // namespace
