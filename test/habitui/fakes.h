@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include "habitcore/CompletionLog.h"
 #include "habitui/Env.h"
 
 namespace habitui {

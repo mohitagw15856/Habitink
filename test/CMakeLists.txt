@@ -17,7 +17,8 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../lib/HabitUI ${CMAKE_BINARY_DIR}/
 enable_testing()
 
 # A single test binary keeps the harness trivial; tinytest registers every
-# TEST() across all translation units.
+# TEST() across all translation units. The firmware controller is portable
+# (it only touches the Hal interfaces), so it is compiled and tested here too.
 add_executable(habitink_tests
   test_main.cpp
   habitcore/test_date.cpp
@@ -25,8 +26,14 @@ add_executable(habitink_tests
   habitcore/test_log_stats.cpp
   habitui/test_canvas.cpp
   habitui/test_app.cpp
+  firmware/test_controller.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../src/HabitInkController.cpp
 )
-target_include_directories(habitink_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(habitink_tests PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/firmware
+  ${CMAKE_CURRENT_SOURCE_DIR}/..  # so "src/..." includes resolve
+)
 target_link_libraries(habitink_tests PRIVATE habitcore habitui)
 
 add_test(NAME habitink_tests COMMAND habitink_tests)
