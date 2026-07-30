@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "habitink-companion"
+version = "0.1.0"
+description = "Companion CLI for the HabitInk habit tracker firmware (reports and backfill)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "HabitInk contributors" }]
+dependencies = ["Pillow>=9.0"]
+
+[project.optional-dependencies]
+test = ["pytest>=7.0"]
+
+[project.scripts]
+habitink = "habitink.cli:main"
+
+[tool.setuptools]
+packages = ["habitink"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
