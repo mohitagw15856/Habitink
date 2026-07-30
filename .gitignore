@@ -1,0 +1,38 @@
+# Reference material (cloned upstream firmware, never committed)
+/reference/
+
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+.cache/
+platformio.local.ini
+
+# Native test build output
+/build/
+/lib/HabitCore/build/
+/lib/HabitUI/build/
+
+# Python companion
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.venv/
+venv/
+dist/
+build/companion/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# Generated artefacts
+*.o
+*.a
+*.bin
+!docs/**/*.bin

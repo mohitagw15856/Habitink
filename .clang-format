@@ -1,0 +1,12 @@
+# HabitInk firmware and portable C++ style.
+# Google base with a 120 column limit and 2 space indents, matching the
+# CrossPoint / freeink-sdk ecosystem so shared idioms read consistently.
+Language: Cpp
+BasedOnStyle: Google
+ColumnLimit: 120
+IndentWidth: 2
+AccessModifierOffset: -1
+DerivePointerAlignment: false
+PointerAlignment: Left
+Standard: c++17
+SortIncludes: true
