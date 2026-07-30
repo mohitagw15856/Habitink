@@ -1,56 +1,97 @@
-# HabitInk
+<div align="center">
 
-A habit and streak tracker for the [Xteink](https://en.wikipedia.org/wiki/E-reader)
-X4/X3 pocket e-reader that turns the always-on nature of e-ink to your advantage:
-the device sleeps almost all the time showing today's unfinished habits, and one
-wake, one press and back to sleep takes under ten seconds.
+<img src="docs/images/logo.png" alt="HabitInk" width="720">
 
-- **One-press logging.** From the home screen, cycle habits with one button and
-  toggle today's completion with another.
-- **Streak grids.** A GitHub-contributions-style year grid per habit, plus an
-  all-habits weekly view, drawn crisply for 1-bit e-ink.
-- **A sleep face that nags you.** The standby screen is today's checklist, so
-  unfinished habits are literally staring at you from the desk.
-- **Tiny state, long battery.** Habits and an append-only log live on the SD
-  card; only a few bytes of state stay in RAM between presses.
-- **A companion CLI.** Generate monthly reports and shareable streak images, and
-  backfill days you forgot, from your computer.
+### habits that literally stare back at you from the desk
 
-HabitInk is a standalone firmware. It is not a fork of a reader: it shares the
-architecture and hardware SDK of the [CrossPoint Reader](https://github.com/crosspoint-reader/crosspoint-reader)
-ecosystem but carries none of its reader code, which is what keeps it small and
-battery-friendly. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full
-reasoning.
+_A habit and streak tracker for the Xteink X4/X3 pocket e-reader that treats "always-on e-ink" as a superpower, not a gimmick._
+
+[![CI](https://github.com/mohitagw15856/habitink/actions/workflows/ci.yml/badge.svg)](https://github.com/mohitagw15856/habitink/actions/workflows/ci.yml)
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
+[![Platform: ESP32-C3](https://img.shields.io/badge/platform-ESP32--C3-8a2be2.svg)](platformio.ini)
+[![Built with PlatformIO](https://img.shields.io/badge/built%20with-PlatformIO-orange.svg)](https://platformio.org/)
+![Tests: 93 green](https://img.shields.io/badge/tests-93%20passing-brightgreen.svg)
+
+<img src="docs/images/demo.gif" alt="HabitInk in action" width="620">
+
+</div>
+
+---
+
+## The pitch
+
+Your e-reader spends 99% of its life asleep doing nothing. HabitInk hijacks that
+dead time: the standby screen becomes today's habit checklist, so the unfinished
+ones sit on your desk quietly judging you. Pick it up, one press to select, one
+press to tick it off, and it is back asleep in under ten seconds. No apps, no
+notifications, no doomscrolling. Just ink and guilt. ✨
+
+HabitInk is a **standalone firmware**, not a reader mod. It shares the
+architecture and hardware SDK of the excellent
+[CrossPoint Reader](https://github.com/crosspoint-reader/crosspoint-reader)
+ecosystem but carries none of its reader code, which is exactly what keeps it
+tiny and sips the battery. The full reasoning lives in
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## What it does
+
+- 🔘 **One-press logging.** Cycle habits with one button, toggle today with
+  another. That is the whole ritual.
+- 🟩 **Streak grids.** A GitHub-contributions-style year grid per habit, drawn
+  crisply for 1-bit e-ink.
+- 🗓️ **Weekly overview.** Every habit, every day of the week, at a glance.
+- 😴 **A sleep face that nags.** Standby is your checklist, completed items
+  struck through, an "N of M done" tally at the bottom.
+- 🪶 **Featherweight state.** Habits and an append-only log live on the SD card;
+  only a few bytes stay in RAM between presses.
+- 🐍 **A companion CLI.** Monthly reports, shareable streak images, and backfill
+  for the days you forgot.
+- 🔋 **Wake, log, sleep in under ten seconds.** The whole point.
 
 ## Screenshots
 
-Rendered from the actual firmware renderer at the panel's 800x480 resolution.
+Rendered straight from the actual firmware renderer at the panel's 800x480.
 
 | Home | Year grid |
-| --- | --- |
-| ![Home screen](docs/images/preview_home.png) | ![Year grid](docs/images/preview_grid.png) |
+| :---: | :---: |
+| <img src="docs/images/preview_home.png" width="380"> | <img src="docs/images/preview_grid.png" width="380"> |
+| **Weekly view** | **Sleep face** |
+| <img src="docs/images/preview_weekly.png" width="380"> | <img src="docs/images/preview_sleep.png" width="380"> |
 
-| Weekly view | Sleep face |
-| --- | --- |
-| ![Weekly view](docs/images/preview_weekly.png) | ![Sleep face](docs/images/preview_sleep.png) |
+...and the companion turns your logs into a shareable grid:
 
-_Photographs of the firmware running on real hardware will go here once the
-device build is verified (see [docs/HARDWARE_TESTING.md](docs/HARDWARE_TESTING.md))._
+<div align="center">
+<img src="docs/images/companion_grid.png" alt="Companion streak grid" width="620">
+</div>
+
+_Photos of the firmware on real hardware will land here once the device build is
+verified on a physical X4/X3 (see [docs/HARDWARE_TESTING.md](docs/HARDWARE_TESTING.md))._
+
+## How it works in five seconds
+
+```
+sleep  →  press to wake  →  Down cycles habits  →  Confirm ticks today
+   ↑                                                        │
+   └──────────  idle / power press  ←  back to standby  ←────┘
+```
+
+Everything else (a per-habit year grid on Right, the weekly view on Left) is one
+press away and one press back.
 
 ## Compatibility
 
 Works with **CrossPoint v1.5.0**-class devices: HabitInk targets the same Xteink
-X4/X3 hardware and the same `freeink-sdk` generation that CrossPoint v1.5.0
-builds against. It stores its data in its own `/.habitink` directory and never
-touches CrossPoint's `/.crosspoint`, so the two can share an SD card. They are
-separate firmwares, so you flash one at a time.
+X4/X3 hardware and the same `freeink-sdk` generation. It keeps its data in its
+own `/.habitink` directory and never touches CrossPoint's `/.crosspoint`, so
+they can share an SD card. They are separate firmwares, so you flash one at a
+time.
 
 ## Install and flash
 
 HabitInk builds with [PlatformIO](https://platformio.org/).
 
 ```sh
-# Host build of the portable application layer (no hardware or SDK needed)
+# Host build of the portable app layer (no hardware or SDK needed)
 pio run -e native && .pio/build/native/program
 
 # Device build for the Xteink X4/X3 (ESP32-C3)
@@ -60,12 +101,12 @@ pio device monitor            # serial log at 115200
 ```
 
 The device (`xteink`) build needs the `freeink-sdk` and the ecosystem HAL wrapper
-layer; see [docs/HARDWARE_TESTING.md](docs/HARDWARE_TESTING.md) for how to wire
-them in and the on-device verification checklist.
+layer; [docs/HARDWARE_TESTING.md](docs/HARDWARE_TESTING.md) covers wiring them in
+and the on-device verification checklist.
 
 ### First run
 
-Create `/.habitink/habits.tsv` on the SD card (or let the companion write it):
+Drop a `/.habitink/habits.tsv` on the SD card (or let the companion write it):
 
 ```
 # habitink habits v1
@@ -74,7 +115,8 @@ Create `/.habitink/habits.tsv` on the SD card (or let the companion write it):
 3	book	0000011	Weekend reading
 ```
 
-The full format is in [docs/FORMAT.md](docs/FORMAT.md).
+Up to twelve habits, `daily` or a Monday-first `1111100` weekday mask, and an
+icon token from the built-in set. Full spec in [docs/FORMAT.md](docs/FORMAT.md).
 
 ## Companion tool
 
@@ -90,22 +132,26 @@ habitink report --sd /path/to/sdcard --month 2026-07 --out report.md --png grid.
 habitink edit --sd /path/to/sdcard --habit "Morning run" --date 2026-07-28 --done
 ```
 
-See [companion/README.md](companion/README.md) for details.
+More in [companion/README.md](companion/README.md).
 
 ## Build and test
 
-```sh
-# Native C++ unit tests (core logic, renderer, firmware controller)
-cmake -S test -B build/test -G Ninja -DCMAKE_BUILD_TYPE=Release
-cmake --build build/test
-ctest --test-dir build/test --output-on-failure
+Almost all of the firmware is portable C++ that runs on your laptop, so the
+tests are fast and need no hardware.
 
-# Companion tests
+```sh
+# Native C++ unit tests (core logic, renderer, firmware controller): 53 tests
+cmake -S test -B build/test -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build/test && ctest --test-dir build/test --output-on-failure
+
+# Companion tests: 40 tests
 cd companion && pip install -e ".[test]" && pytest
 ```
 
-The embedded font and icons are generated and checked in; regenerate them with
-`python3 scripts/gen_font.py` and `python3 scripts/gen_icons.py`.
+The embedded font and icons are generated and checked in; regenerate with
+`python3 scripts/gen_font.py` and `python3 scripts/gen_icons.py`. The
+screenshots and demo GIF come from `scripts/render_preview.cpp`,
+`scripts/render_frames.cpp` and `scripts/make_gifs.py`.
 
 ## Repository layout
 
@@ -121,13 +167,18 @@ scripts/         asset generators and the screen preview renderer
 
 ## Documentation
 
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) - design and the fork/module/standalone decision
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) - design and the fork vs module vs standalone decision
 - [docs/FORMAT.md](docs/FORMAT.md) - the on-disk data format
 - [docs/HARDWARE_TESTING.md](docs/HARDWARE_TESTING.md) - on-device verification checklist
 - [CONTRIBUTING.md](CONTRIBUTING.md) - how to contribute
 
 ## Licence
 
-MIT. See [LICENSE](LICENSE). HabitInk reuses the CrossPoint / `freeink-sdk`
+MIT, see [LICENSE](LICENSE). HabitInk reuses the CrossPoint / `freeink-sdk`
 ecosystem's ideas and MIT-licensed conventions but contains no copied CrossPoint
-source.
+source. The embedded font is generated from Pillow's permissively licensed
+built-in bitmap font.
+
+<div align="center">
+<sub>Made with ink, restraint, and a healthy fear of broken streaks.</sub>
+</div>
