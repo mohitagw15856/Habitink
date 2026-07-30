@@ -96,7 +96,13 @@ SDK. From the bottom up:
 - **`src/platform/freeink`** is the only SDK-facing code: SD storage (with
   streamed, memory-bounded log reads), the RTC clock, the panel, the buttons and
   deep sleep. These adapters are small and are the items listed in
-  [HARDWARE_TESTING.md](HARDWARE_TESTING.md).
+  [HARDWARE_TESTING.md](HARDWARE_TESTING.md). The raw freeink-sdk calls they make
+  (Storage helpers, `HalFile` streaming, HalGPIO edges, panel flush, deep sleep)
+  live in the shared [`inkkit`](https://github.com/mohitagw15856/inkkit) library,
+  which HabitInk and InkCards both consume; the freeink adapters here are the thin
+  HabitInk-specific layer (logical `AppButton` map, `/.habitink` paths, log
+  framing) over it. inkkit is added only to the `xteink` (device) build via
+  `lib_deps`, so the CI `native` build and host tests never pull it in.
 
 ## Runtime flow
 
