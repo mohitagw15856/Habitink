@@ -4,7 +4,8 @@
 // use a mock Store instead.
 #ifdef ARDUINO
 
-#include <HalStorage.h>
+#include <inkkit/SdStream.h>
+#include <inkkit/Storage.h>
 
 #include <cstdio>
 
@@ -17,59 +18,39 @@ std::string FreeInkStore::logPath(int habitId) const {
 }
 
 void FreeInkStore::ensureDirs() const {
-  // TODO(hardware-test): confirm ensureDirectoryExists creates parents.
-  Storage.ensureDirectoryExists(root_.c_str());
-  Storage.ensureDirectoryExists((root_ + "/logs").c_str());
+  inkkit::sd::ensureDir(root_.c_str());
+  inkkit::sd::ensureDir((root_ + "/logs").c_str());
 }
 
 bool FreeInkStore::readConfig(std::string& outText) {
-  if (!Storage.exists(configPath().c_str())) return false;
   // habits.tsv is tiny (<=12 short lines); reading it whole is fine.
-  String content = Storage.readFile(configPath().c_str());
-  outText.assign(content.c_str(), content.length());
-  return !outText.empty();
+  return inkkit::sd::readWholeFile(configPath().c_str(), outText);
 }
 
 bool FreeInkStore::writeConfig(const std::string& text) {
   ensureDirs();
-  return Storage.writeFile(configPath().c_str(), String(text.c_str()));
+  return inkkit::sd::writeWholeFile(configPath().c_str(), text);
 }
 
 bool FreeInkStore::readLog(int habitId, const std::function<void(const std::string&)>& sink) {
   const std::string path = logPath(habitId);
-  if (!Storage.exists(path.c_str())) return false;
+  if (!inkkit::sd::exists(path.c_str())) return false;
 
   HalFile file;
-  if (!Storage.openFileForRead("HAB", path.c_str(), file)) return false;
+  if (!inkkit::sd::openRead("HAB", path.c_str(), file)) return false;
 
   // Stream line by line so a long history never buffers on the ~380KB heap.
-  std::string line;
-  line.reserve(24);
-  char chunk[64];
-  int n;
-  while ((n = file.read(chunk, sizeof(chunk))) > 0) {
-    for (int i = 0; i < n; ++i) {
-      const char c = chunk[i];
-      if (c == '\n') {
-        sink(line);
-        line.clear();
-      } else if (c != '\r') {
-        line.push_back(c);
-      }
-    }
-  }
-  if (!line.empty()) sink(line);
+  inkkit::readLines(file, sink);
+  file.close();
   return true;
 }
 
 bool FreeInkStore::appendLog(int habitId, const std::string& recordLine) {
   ensureDirs();
   const std::string path = logPath(habitId);
-  const bool fresh = !Storage.exists(path.c_str());
+  const bool fresh = !inkkit::sd::exists(path.c_str());
 
-  // TODO(hardware-test): confirm openFileForWrite opens in append mode, or
-  // switch to Storage.open(path, O_WRONLY | O_CREAT | O_APPEND).
-  HalFile file = Storage.open(path.c_str(), O_WRONLY | O_CREAT | O_APPEND);
+  HalFile file = inkkit::sd::openAppend(path.c_str());
   if (!file) return false;
   if (fresh) {
     file.write("# habitink log v1\n", 18);

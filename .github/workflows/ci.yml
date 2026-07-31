@@ -33,13 +33,35 @@ jobs:
           python-version: '3.11'
       - name: Install PlatformIO
         run: pip install --upgrade platformio
+      - name: Cache PlatformIO
+        uses: actions/cache@v4
+        with:
+          path: ~/.platformio
+          key: pio-${{ runner.os }}-${{ hashFiles('platformio.ini') }}
       - name: Build firmware application layer (native env)
         # Compiles and links the whole portable firmware layer (controller +
-        # app + core) with the PlatformIO toolchain. The on-target `xteink`
-        # build is the hardware verification step (docs/HARDWARE_TESTING.md).
+        # app + core) with the PlatformIO toolchain.
         run: pio run -e native
       - name: Smoke-run the host binary
         run: .pio/build/native/program
+      # Device environments build one at a time: pio package installs are not
+      # safe to run concurrently against a shared ~/.platformio.
+      - name: Build X4 firmware
+        run: pio run -e xteink_x4
+      - name: Build X3 firmware
+        run: pio run -e xteink_x3
+      - name: Upload X4 artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: habitink-xteink_x4-firmware
+          path: .pio/build/xteink_x4/firmware.bin
+          if-no-files-found: error
+      - name: Upload X3 artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: habitink-xteink_x3-firmware
+          path: .pio/build/xteink_x3/firmware.bin
+          if-no-files-found: error
 
   companion-tests:
     name: Companion tests

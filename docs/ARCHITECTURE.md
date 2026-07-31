@@ -11,7 +11,7 @@ sleep should take under ten seconds.
 
 Before writing any code we cloned and studied the dominant community firmware,
 [CrossPoint Reader](https://github.com/crosspoint-reader/crosspoint-reader)
-(MIT licensed, built on the separate `freeink-sdk` hardware SDK). CrossPoint is a
+(MIT licensed, its hardware layer drawn from the FreeInk SDK). CrossPoint is a
 mature, memory-disciplined e-reader with an Android-style Activity stack, an
 SD-first cache under `/.crosspoint`, a dedicated render task, and a careful deep
 sleep and quick-resume flow. Three options were on the table:
@@ -25,7 +25,7 @@ sleep and quick-resume flow. Three options were on the table:
   fork, but it still boots the full reader firmware, and the reader's scope
   guardrails may not want a habit tracker upstream.
 - **(c) A standalone firmware.** A single-purpose firmware for the same
-  hardware, built on the same public `freeink-sdk`, sharing CrossPoint's
+  hardware, its device layer supplied by inkkit (which vendors the FreeInk SDK hardware libraries), sharing CrossPoint's
   architectural patterns (Activity-style flow, SD-first storage, deep-sleep
   wake/log/sleep loop) but none of its reader code.
 
@@ -35,7 +35,7 @@ wake, log, sleep in under ten seconds." A single-purpose firmware boots faster,
 holds far less state, and has a far smaller attack and failure surface than a
 reader carrying features HabitInk will never use. It reuses CrossPoint's ideas,
 not its code, so there is no derived-work licensing burden; and where we do
-depend on shared components (the `freeink-sdk` HAL, and the ecosystem's
+depend on shared components (the inkkit device layer, and the ecosystem's
 `GfxRenderer`-style conventions) they are MIT, matching our own MIT licence.
 
 The design keeps option (b) open at low cost: all screen logic is expressed as
@@ -44,7 +44,7 @@ repackaged as a CrossMux app later with no change to the core.
 
 ### Licence compatibility
 
-CrossPoint and `freeink-sdk` are MIT. HabitInk is MIT. No CrossPoint source is
+CrossPoint and the FreeInk SDK are MIT. HabitInk is MIT. No CrossPoint source is
 copied into this repository. The embedded font is generated from Pillow's
 built-in bitmap font (a permissive HPND-style licence) and checked in as our own
 generated data. Everything is therefore MIT-compatible.
@@ -96,7 +96,13 @@ SDK. From the bottom up:
 - **`src/platform/freeink`** is the only SDK-facing code: SD storage (with
   streamed, memory-bounded log reads), the RTC clock, the panel, the buttons and
   deep sleep. These adapters are small and are the items listed in
-  [HARDWARE_TESTING.md](HARDWARE_TESTING.md).
+  [HARDWARE_TESTING.md](HARDWARE_TESTING.md). The raw device-layer calls they make
+  (Storage helpers, `HalFile` streaming, HalGPIO edges, panel flush, deep sleep)
+  live in the shared [`inkkit`](https://github.com/mohitagw15856/inkkit) library,
+  which HabitInk and InkCards both consume; the adapters here are the thin
+  HabitInk-specific layer (logical `AppButton` map, `/.habitink` paths, log
+  framing) over it. inkkit is added only to the `xteink` (device) build via
+  `lib_deps`, so the CI `native` build and host tests never pull it in.
 
 ## Runtime flow
 
