@@ -10,7 +10,8 @@
 #ifdef ARDUINO
 
 #include <Arduino.h>
-#include <BoardConfig.h>
+#include <HalGPIO.h>
+#include <HalPowerManager.h>
 #include <HalStorage.h>
 
 #include "src/HabitInkController.h"
@@ -32,9 +33,13 @@ bool g_running = true;
 
 void setup() {
   // Bring up the board, storage and display, then hand off to the controller.
-  BoardConfig::begin();  // TODO(hardware-test): confirm the SDK bring-up entry point.
+  // gpio.begin() runs SPI/button setup and X4-vs-X3 detection; it must precede
+  // storage and display bring-up (CrossPoint boot order).
+  // TODO(hardware-test): verify the boot order on device.
+  gpio.begin();
   Storage.begin();
   g_display.begin();
+  powerManager.begin();
 
   habitink::Hal hal;
   hal.display = &g_display;

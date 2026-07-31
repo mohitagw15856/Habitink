@@ -81,7 +81,8 @@ press away and one press back.
 ## Compatibility
 
 Works with **CrossPoint v1.5.0**-class devices: HabitInk targets the same Xteink
-X4/X3 hardware and the same `freeink-sdk` generation. It keeps its data in its
+X4/X3 hardware, with its device layer supplied by
+[inkkit](https://github.com/mohitagw15856/inkkit). It keeps its data in its
 own `/.habitink` directory and never touches CrossPoint's `/.crosspoint`, so
 they can share an SD card. They are separate firmwares, so you flash one at a
 time.
@@ -94,15 +95,18 @@ HabitInk builds with [PlatformIO](https://platformio.org/).
 # Host build of the portable app layer (no hardware or SDK needed)
 pio run -e native && .pio/build/native/program
 
-# Device build for the Xteink X4/X3 (ESP32-C3)
-pio run -e xteink
-pio run -e xteink -t upload   # flash over USB
-pio device monitor            # serial log at 115200
+# Device build for the Xteink X4/X3 (ESP32-C3); run one env at a time
+pio run -e xteink_x4
+pio run -e xteink_x4 -t upload   # flash over USB
+pio device monitor               # serial log at 115200
 ```
 
-The device (`xteink`) build needs the `freeink-sdk` and the ecosystem HAL wrapper
-layer; [docs/HARDWARE_TESTING.md](docs/HARDWARE_TESTING.md) covers wiring them in
-and the on-device verification checklist.
+The device environments (`xteink_x4`, `xteink_x3`, identical firmware with
+runtime device detection) get their complete device layer from
+[inkkit](https://github.com/mohitagw15856/inkkit), pinned in `platformio.ini`;
+no submodules or extra SDK setup. Status: builds in CI, not yet verified on
+device; [docs/HARDWARE_TESTING.md](docs/HARDWARE_TESTING.md) has the
+verification checklist.
 
 ### First run
 
@@ -158,7 +162,7 @@ screenshots and demo GIF come from `scripts/render_preview.cpp`,
 ```
 lib/HabitCore    portable habit logic (dates, config, log, streaks, grids)
 lib/HabitUI      portable 1-bit renderer, embedded assets, screens and flow
-src/             firmware: controller + freeink-sdk adapters + Arduino entry
+src/             firmware: controller + inkkit device adapters + Arduino entry
 companion/       Python CLI (report, edit) with pytest
 test/            native C++ tests
 docs/            architecture, data format, hardware testing checklist
@@ -174,9 +178,9 @@ scripts/         asset generators and the screen preview renderer
 
 ## Licence
 
-MIT, see [LICENSE](LICENSE). HabitInk reuses the CrossPoint / `freeink-sdk`
-ecosystem's ideas and MIT-licensed conventions but contains no copied CrossPoint
-source. The embedded font is generated from Pillow's permissively licensed
+MIT, see [LICENSE](LICENSE). HabitInk reuses the CrossPoint / FreeInk
+ecosystem's ideas and MIT-licensed conventions (via the inkkit device layer)
+but contains no copied CrossPoint source. The embedded font is generated from Pillow's permissively licensed
 built-in bitmap font.
 
 <div align="center">

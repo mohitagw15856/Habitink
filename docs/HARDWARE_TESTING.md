@@ -2,21 +2,22 @@
 
 Most of HabitInk is portable and is tested automatically on the host (see
 [ARCHITECTURE.md](ARCHITECTURE.md)). The parts that genuinely cannot be verified
-without an Xteink X4/X3 and the pinned `freeink-sdk` are implemented as a
-best-guess against the ecosystem HAL API and marked in the source with
-`TODO(hardware-test)`. This page lists every one so they can be confirmed on
-device.
+without an Xteink X4/X3 are implemented against the inkkit device layer and
+marked in the source with `TODO(hardware-test)`. This page lists every one so
+they can be confirmed on device.
 
 ## How to build and flash for hardware
 
-The device firmware is the `xteink` PlatformIO environment. It needs the
-`freeink-sdk` and the ecosystem HAL wrapper layer (`HalDisplay`, `HalStorage`,
-`HalGPIO`, and the SDK `Rtc` / `BoardConfig`). Wire those in via a submodule or
-`lib_deps` (a commented starting point is in `platformio.ini`), then:
+The device firmware is the `xteink_x4` / `xteink_x3` PlatformIO environments
+(identical firmware; the device is detected at runtime). The complete device
+layer (`HalDisplay`, `HalStorage`, `HalGPIO`, `Rtc`, `BoardConfig` and the SDK
+hardware libraries) comes from
+[inkkit](https://github.com/mohitagw15856/inkkit), already pinned in
+`platformio.ini`. Then:
 
 ```sh
-pio run -e xteink            # build
-pio run -e xteink -t upload  # flash over USB
+pio run -e xteink_x4            # build
+pio run -e xteink_x4 -t upload  # flash over USB
 pio device monitor           # serial log at 115200
 ```
 
@@ -32,10 +33,10 @@ pio run -e native && .pio/build/native/program
 Each item is a `TODO(hardware-test)` in the source.
 
 ### Boot and bring-up (`src/main.cpp`)
-- Confirm the SDK bring-up entry point and ordering. We call
-  `BoardConfig::begin()` then `Storage.begin()` then `display.begin()`; verify
-  these are the right calls and order for a from-cold and from-deep-sleep wake,
-  and add clock/RTC and power init as the SDK requires.
+- Confirm the bring-up ordering. We call `gpio.begin()` (SPI/button setup and
+  X4-vs-X3 detection), then `Storage.begin()`, `display.begin()` and
+  `powerManager.begin()`, following the CrossPoint boot order; verify this is
+  right for a from-cold and a from-deep-sleep wake.
 - Confirm the wake path shows the home screen quickly and that a button wake
   uses a fast refresh while a cold boot uses a full refresh.
 
