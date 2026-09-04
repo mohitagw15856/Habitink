@@ -1,5 +1,12 @@
 #include "src/HabitInkController.h"
 
+#if defined(ARDUINO) && defined(HABITINK_DEBUG_SERIAL)
+#include "src/platform/freeink/DebugSerial.h"
+#define HABITINK_TRACE(what, arg) habitink::debugserial::trace(what, arg)
+#else
+#define HABITINK_TRACE(what, arg)
+#endif
+
 #include "habitui/FrameCanvas.h"
 
 namespace habitink {
@@ -41,16 +48,27 @@ bool HabitInkController::tick() {
   AppButton button;
   while (hal_.buttons->popButton(button)) {
     activity = true;
+    HABITINK_TRACE("button", static_cast<int>(button));
     if (app_.handleButton(button)) needRepaint = true;
+    HABITINK_TRACE("handled", needRepaint ? 1 : 0);
   }
 
-  if (needRepaint) repaint(false);
+  if (needRepaint) {
+    HABITINK_TRACE("repaint-begin", 0);
+    repaint(false);
+    HABITINK_TRACE("repaint-end", 0);
+  }
   if (activity) lastActivityMs_ = hal_.power->millis();
 
   // Manual sleep: holding power. Idle sleep: no input for idleSleepMs_.
   const uint32_t now = hal_.power->millis();
   const bool idleElapsed = (now - lastActivityMs_) >= idleSleepMs_;
-  if (hal_.buttons->powerHeld() || idleElapsed) {
+  // Hold Back: hand the device back to the reader firmware in the other slot.
+  if (hal_.buttons->exitHeld() && hal_.power->rebootToReader()) return false;
+
+  const bool powerHeld = hal_.buttons->powerHeld();
+  if (!powerHeld) powerArmed_ = true;
+  if ((powerArmed_ && powerHeld) || idleElapsed) {
     goToSleep();
     return false;
   }

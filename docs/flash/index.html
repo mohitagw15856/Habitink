@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Install HabitInk on your Xteink</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 16px/1.5 system-ui, sans-serif; max-width: 42rem; margin: 2rem auto; padding: 0 1rem; }
+  h1 { font-size: 1.6rem; }
+  .card { border: 1px solid #8884; border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0; }
+  .warn { background: #fff3cd; color: #3b2f00; border-color: #e0c060; }
+  @media (prefers-color-scheme: dark) { .warn { background: #3a2f00; color: #ffe08a; } }
+  code { background: #8882; padding: 0 .3em; border-radius: 4px; }
+  esp-web-install-button { --esp-tools-button-color: #1a1a1a; --esp-tools-button-text-color: #fff; }
+  esp-web-install-button[install-unsupported] { display: block; }
+  ol li { margin: .3rem 0; }
+</style>
+<script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+</head>
+<body>
+<h1>Install HabitInk on your Xteink X3 / X4</h1>
+<p>HabitInk is a one-button habit tracker for the Xteink e-readers. It installs into the
+reader's <em>spare</em> firmware slot, so your stock reader firmware stays on the device and
+you can switch back any time. Hold <strong>Back</strong> for 1.5&nbsp;s inside HabitInk to return to
+the reader; use the second button below to switch back from a computer.</p>
+
+<div class="card warn">
+<strong>Read before flashing.</strong>
+<ol>
+  <li>Works in <strong>Chrome or Edge</strong> on a computer (Web Serial). Use the cable that came with the device; on the X3 the magnetic cable must be the data-capable one.</li>
+  <li>This writes firmware slot&nbsp;A and tells the bootloader to boot it. Your stock reader must be in slot&nbsp;B, which is the case once the reader has taken at least one stock update over Wi-Fi. If you are not sure, use the SD-card method below instead: the stock bootloader then chooses the slot itself.</li>
+  <li>Some readers bought from third-party stores are USB-locked and will not show up in the port picker. Do not force it; use the SD-card method.</li>
+  <li>Do not tick "erase device" if the flasher offers it.</li>
+</ol>
+</div>
+
+<div class="card">
+<h2>1. Install HabitInk</h2>
+<p>Turn the reader on, plug it in, then:</p>
+<esp-web-install-button manifest="manifest-habitink.json">
+  <span slot="unsupported">Your browser does not support Web Serial. Use Chrome or Edge on a computer.</span>
+</esp-web-install-button>
+<p>After flashing, hold <strong>Power</strong> for two seconds if the screen stays blank. On first run HabitInk writes three starter habits to
+<code>/.habitink/habits.tsv</code> on the SD card; edit that file to make them yours.</p>
+</div>
+
+<div class="card">
+<h2>2. Return to the stock reader</h2>
+<p>Only flips which slot boots; nothing is erased. HabitInk stays in slot&nbsp;A until you install something else there.</p>
+<esp-web-install-button manifest="manifest-stock.json">
+  <span slot="unsupported">Your browser does not support Web Serial. Use Chrome or Edge on a computer.</span>
+</esp-web-install-button>
+</div>
+
+<div class="card">
+<h2>SD-card method (no cable, works on locked units)</h2>
+<ol>
+  <li>Download <a href="Habitink.bin">Habitink.bin</a> and rename it to <code>update.bin</code>.</li>
+  <li>Copy it to the root of the reader's SD card (FAT32 or exFAT).</li>
+  <li>Insert the card, plug in power, and hold <strong>Power</strong> together with the <strong>top-left button</strong> until the update screen appears.</li>
+</ol>
+</div>
+
+<p><a href="https://github.com/mohitagw15856/Habitink">Source, issues and docs on GitHub</a>. MIT licensed.</p>
+</body>
+</html>

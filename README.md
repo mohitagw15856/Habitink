@@ -40,6 +40,10 @@ tiny and sips the battery. The full reasoning lives in
 - 🟩 **Streak grids.** A GitHub-contributions-style year grid per habit, drawn
   crisply for 1-bit e-ink.
 - 🗓️ **Weekly overview.** Every habit, every day of the week, at a glance.
+- 📚 **Lives beside your reader.** HabitInk installs into the Xteink's spare
+  firmware slot; stock firmware (or CrossPoint) stays in the other. Hold
+  **Back** for ~1.5 s to reboot into the reader. Starter habits are written to
+  the SD card on first run, so the device is usable straight after flashing.
 - 😴 **A sleep face that nags.** Standby is your checklist, completed items
   struck through, an "N of M done" tally at the bottom.
 - 🪶 **Featherweight state.** Habits and an append-only log live on the SD card;
@@ -104,9 +108,10 @@ pio device monitor               # serial log at 115200
 The device environments (`xteink_x4`, `xteink_x3`, identical firmware with
 runtime device detection) get their complete device layer from
 [inkkit](https://github.com/mohitagw15856/inkkit), pinned in `platformio.ini`;
-no submodules or extra SDK setup. Status: builds in CI, not yet verified on
-device; [docs/HARDWARE_TESTING.md](docs/HARDWARE_TESTING.md) has the
-verification checklist.
+no submodules or extra SDK setup. Status: builds in CI and verified on an
+Xteink X3 (UC8279 panel) on 2026-09-04: boot, first-run seed, buttons, fast
+and full refresh, sleep/wake and exit-to-reader;
+[docs/HARDWARE_TESTING.md](docs/HARDWARE_TESTING.md) has the checklist.
 
 ### First run
 

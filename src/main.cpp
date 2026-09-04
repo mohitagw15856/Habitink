@@ -19,6 +19,16 @@
 #include "src/platform/freeink/FreeInkHal.h"
 #include "src/platform/freeink/FreeInkStore.h"
 
+#ifdef HABITINK_DEBUG_SERIAL
+#include "src/platform/freeink/DebugSerial.h"
+#define HABITINK_DBG(call) habitink::debugserial::call
+// Bench builds stay awake 10 minutes instead of 20 s so buttons can be probed.
+constexpr uint32_t kIdleSleepMs = 600000;
+#else
+#define HABITINK_DBG(call)
+constexpr uint32_t kIdleSleepMs = 20000;
+#endif
+
 namespace {
 habitink::FreeInkDisplay g_display;
 habitink::FreeInkButtons g_buttons;
@@ -36,7 +46,9 @@ void setup() {
   // gpio.begin() runs SPI/button setup and X4-vs-X3 detection; it must precede
   // storage and display bring-up (CrossPoint boot order).
   // TODO(hardware-test): verify the boot order on device.
+  HABITINK_DBG(begin());
   gpio.begin();
+  HABITINK_DBG(banner());
   Storage.begin();
   g_display.begin();
   powerManager.begin();
@@ -48,7 +60,7 @@ void setup() {
   hal.store = &g_store;
   hal.clock = &g_clock;
 
-  static habitink::HabitInkController controller(hal);
+  static habitink::HabitInkController controller(hal, kIdleSleepMs);
   g_controller = &controller;
   g_controller->begin();
 }
@@ -58,6 +70,7 @@ void loop() {
     delay(50);
     return;
   }
+  HABITINK_DBG(tick());
   g_running = g_controller->tick();
   // Light idle delay keeps input responsive while sipping power; the controller
   // itself decides when to deep sleep (which does not return).

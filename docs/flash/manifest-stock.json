@@ -1,0 +1,13 @@
+{
+  "name": "Return to stock reader",
+  "version": "1",
+  "new_install_prompt_erase": false,
+  "builds": [
+    {
+      "chipFamily": "ESP32-C3",
+      "parts": [
+        { "path": "otadata-boot-b.bin", "offset": 57344 }
+      ]
+    }
+  ]
+}

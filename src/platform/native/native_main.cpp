@@ -41,6 +41,7 @@ class HeadlessButtons : public habitink::HalButtons {
     return true;
   }
   bool powerHeld() const override { return false; }
+  bool exitHeld() const override { return false; }
 };
 
 class HeadlessPower : public habitink::HalPower {
@@ -49,6 +50,7 @@ class HeadlessPower : public habitink::HalPower {
   habitink::WakeReason wakeReason() const override { return habitink::WakeReason::ColdBoot; }
   uint32_t millis() const override { return now; }
   void deepSleep() override {}
+  bool rebootToReader() override { return false; }
 };
 
 class MemStore : public habitui::Store {

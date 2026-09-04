@@ -90,11 +90,35 @@ TEST(controller_sleeps_on_power_hold) {
   s.config = kConfig;
   HabitInkController ctrl(makeHal(d, b, p, s, c));
   ctrl.begin();
+  CHECK(ctrl.tick());  // power seen released once: hold-to-sleep is now armed
   b.holdPower = true;
   CHECK(!ctrl.tick());  // decided to sleep
   CHECK(ctrl.sleeping());
   CHECK_EQ(p.deepSleeps, 1);
   CHECK(d.lastFull);  // sleep face uses a full refresh
+}
+
+TEST(controller_ignores_power_still_held_from_wake) {
+  // The hold that woke the device is still down on the first ticks; it must
+  // not be read as "hold to sleep" or the device bounces straight back to sleep.
+  MockDisplay d;
+  MockButtons b;
+  MockPower p;
+  habitui::FakeStore s;
+  habitui::FakeClock c;
+  s.config = kConfig;
+  HabitInkController ctrl(makeHal(d, b, p, s, c));
+  ctrl.begin();
+  b.holdPower = true;
+  CHECK(ctrl.tick());
+  CHECK(ctrl.tick());
+  CHECK(!ctrl.sleeping());
+  CHECK_EQ(p.deepSleeps, 0);
+  b.holdPower = false;
+  CHECK(ctrl.tick());  // released: armed from here on
+  b.holdPower = true;
+  CHECK(!ctrl.tick());
+  CHECK_EQ(p.deepSleeps, 1);
 }
 
 TEST(controller_sleeps_on_idle_timeout) {
@@ -126,5 +150,21 @@ TEST(controller_activity_resets_idle_timer) {
   CHECK(ctrl.tick());  // activity at t=8000 resets timer
   p.now = 15000;       // 7000ms since activity: below threshold
   CHECK(ctrl.tick());
+  CHECK_EQ(p.deepSleeps, 0);
+}
+
+TEST(controller_back_hold_reboots_to_reader) {
+  MockDisplay d;
+  MockButtons b;
+  MockPower p;
+  habitui::FakeStore s;
+  habitui::FakeClock c;
+  s.config = kConfig;
+  HabitInkController ctrl(makeHal(d, b, p, s, c));
+  ctrl.begin();
+  CHECK(ctrl.tick());
+  b.holdExit = true;
+  CHECK(!ctrl.tick());
+  CHECK_EQ(p.readerReboots, 1);
   CHECK_EQ(p.deepSleeps, 0);
 }

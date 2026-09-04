@@ -50,6 +50,8 @@ class MockButtons : public HalButtons {
     return true;
   }
   bool powerHeld() const override { return holdPower; }
+  bool exitHeld() const override { return holdExit; }
+  bool holdExit = false;
 };
 
 class MockPower : public HalPower {
@@ -60,6 +62,8 @@ class MockPower : public HalPower {
   WakeReason wakeReason() const override { return reason; }
   uint32_t millis() const override { return now; }
   void deepSleep() override { ++deepSleeps; }
+  bool rebootToReader() override { ++readerReboots; return true; }
+  int readerReboots = 0;
 
   int deepSleeps = 0;
 };

@@ -131,7 +131,10 @@ TEST(app_renders_all_screens_without_crash) {
 
 TEST(app_empty_config_is_safe) {
   FakeStore store;
-  FakeClock clock;  // no config set
+  FakeClock clock;
+  // A habits.tsv that exists but defines nothing (header only). A missing file
+  // is seeded instead; see app_seeds_starter_habits_on_first_run.
+  store.config = "# habitink habits v1\n";
   HabitApp app(store, clock);
   app.load();
   CHECK_EQ(app.habitCount(), 0);
@@ -154,4 +157,23 @@ TEST(app_weekly_reads_current_week) {
   FrameCanvas c(buf.data(), 800, 480, 100);
   app.render(c);  // exercises buildWeekRow path
   CHECK(app.screen() == Screen::Weekly);
+}
+
+TEST(app_seeds_starter_habits_on_first_run) {
+  FakeStore store;  // no habits.tsv at all
+  FakeClock clock;
+  HabitApp app(store, clock);
+  app.load();
+  CHECK(app.loaded());
+  CHECK_EQ(app.habitCount(), 3);
+  CHECK(!store.config.empty());
+  CHECK(store.config.find("Drink 2L water") != std::string::npos);
+  CHECK(store.config.find("0000011") != std::string::npos);
+  // The written file round-trips: a fresh app sees the same three habits.
+  HabitApp again(store, clock);
+  again.load();
+  CHECK_EQ(again.habitCount(), 3);
+  // And the seeded list is interactive (Next no longer falls into the empty guard).
+  CHECK(again.handleButton(AppButton::Next));
+  CHECK_EQ(again.selectedIndex(), 1);
 }

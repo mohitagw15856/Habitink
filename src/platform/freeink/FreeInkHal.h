@@ -28,6 +28,7 @@ class FreeInkButtons : public HalButtons {
   void poll() override;
   bool popButton(habitui::AppButton& out) override;
   bool powerHeld() const override;
+  bool exitHeld() const override;
 
  private:
   std::deque<habitui::AppButton> queue_;
@@ -38,6 +39,7 @@ class FreeInkPower : public HalPower {
   WakeReason wakeReason() const override;
   uint32_t millis() const override;
   void deepSleep() override;
+  bool rebootToReader() override;
 };
 
 }  // namespace habitink

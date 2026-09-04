@@ -1,0 +1,14 @@
+{
+  "name": "HabitInk",
+  "version": "0.1.0",
+  "new_install_prompt_erase": false,
+  "builds": [
+    {
+      "chipFamily": "ESP32-C3",
+      "parts": [
+        { "path": "Habitink.bin", "offset": 65536 },
+        { "path": "otadata-boot-a.bin", "offset": 57344 }
+      ]
+    }
+  ]
+}

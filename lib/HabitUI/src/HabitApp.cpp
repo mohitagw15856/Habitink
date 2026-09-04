@@ -23,6 +23,25 @@ void checkbox(FrameCanvas& c, int x, int y, int size, bool ticked) {
 }
 }  // namespace
 
+namespace {
+// Mirrors the example in README.md / docs/FORMAT.md.
+void seedStarterHabits(habitcore::HabitConfig& config) {
+  struct Seed { const char* icon; const char* schedule; const char* name; };
+  static const Seed kSeeds[] = {
+      {"water", "daily", "Drink 2L water"},
+      {"run", "1111100", "Morning run"},
+      {"book", "0000011", "Weekend reading"},
+  };
+  for (const Seed& seed : kSeeds) {
+    habitcore::Habit h;
+    h.icon = seed.icon;
+    h.name = seed.name;
+    habitcore::Schedule::parseField(seed.schedule, h.schedule);
+    config.add(h);  // id assigned from nextFreeId()
+  }
+}
+}  // namespace
+
 void HabitApp::load() {
   config_ = habitcore::HabitConfig();
   runtime_.clear();
@@ -31,6 +50,15 @@ void HabitApp::load() {
   std::string text;
   if (store_.readConfig(text)) {
     habitcore::HabitConfig::parse(text, config_);
+  } else {
+    // First run: no habits.tsv on the card yet. Seed the README starter set so
+    // the device is usable straight after flashing (an empty list ignores every
+    // button except Back, which reads as a frozen device). The user edits the
+    // file or uses the companion afterwards. A failed write is not fatal; the
+    // in-memory seed still loads for this session.
+    config_ = habitcore::HabitConfig();
+    seedStarterHabits(config_);
+    store_.writeConfig(config_.serialise());
   }
   for (const auto& h : config_.habits()) {
     Runtime rt;

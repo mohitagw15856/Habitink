@@ -43,6 +43,9 @@ class HalButtons {
   virtual bool popButton(habitui::AppButton& out) = 0;
   // True while the power button is being held (for manual sleep).
   virtual bool powerHeld() const = 0;
+  // True while Back has been held long enough (~1.5 s) to mean "leave HabitInk
+  // and reboot into the reader firmware in the other slot".
+  virtual bool exitHeld() const = 0;
 };
 
 // Power / sleep control.
@@ -55,6 +58,9 @@ class HalPower {
   // Persist nothing here; the controller has already flushed the sleep face.
   // Does not return: the device powers down until the next wake.
   virtual void deepSleep() = 0;
+  // Reboot into the other firmware slot (stock reader / CrossPoint). Returns
+  // false if there is none; on device a true return never comes back.
+  virtual bool rebootToReader() = 0;
 };
 
 // Bundle passed to the controller.

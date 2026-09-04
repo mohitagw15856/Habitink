@@ -53,6 +53,10 @@ bool FreeInkButtons::popButton(habitui::AppButton& out) {
   return true;
 }
 
+bool FreeInkButtons::exitHeld() const {
+  return gpio.isPressed(HalGPIO::BTN_BACK) && gpio.getHeldTime() > 1500;
+}
+
 bool FreeInkButtons::powerHeld() const {
   // A deliberate hold, not the wake tap.
   return inkkit::Buttons(gpio).powerHeldMs() > 350;
@@ -81,3 +85,9 @@ void FreeInkPower::deepSleep() {
 }  // namespace habitink
 
 #endif  // ARDUINO
+
+namespace habitink {
+bool FreeInkPower::rebootToReader() {
+  return inkkit::Power(powerManager, display, gpio).rebootIntoOtherFirmware();
+}
+}  // namespace habitink

@@ -35,6 +35,11 @@ class HabitInkController {
   Hal hal_;
   habitui::HabitApp app_;
   uint32_t idleSleepMs_;
+  // The Power hold that wakes the device from deep sleep is usually still down
+  // when tick() first runs; honouring it as "hold to sleep" would put the
+  // device straight back to sleep (seen on hardware 2026-09-04). Power only
+  // counts once it has been seen released after boot.
+  bool powerArmed_ = false;
   uint32_t lastActivityMs_ = 0;
   bool sleeping_ = false;
 };
